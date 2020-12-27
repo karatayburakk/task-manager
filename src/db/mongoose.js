@@ -6,19 +6,14 @@ mongoose.connect('mongodb://127.0.0.1:27017/task-manager-api', {
     useUnifiedTopology: true
 })
 
-const User = mongoose.model('User', {
-    name: {
-        type: String
-    },
-    age: {
-        type: Number
-    }
-})
+
 
 
 // const me = new User({
-//     name: 'Burak',
-//     age: 'thisis'
+//     name: '   Veli',
+//     email: 'VELI@example.com',
+//     age: 23,
+//     password: 'password1234'
 // })
 
 
@@ -29,18 +24,10 @@ const User = mongoose.model('User', {
 //     console.log(error)
 // })
 
-const Task = mongoose.model('Task', {
-    description: {
-        type: String
-    },
-    completed: {
-        type: Boolean
-    }
-})
+
 
 // const task2 = new Task({
-//     description:'task2',
-//     completed: true
+//     description:'task1234'
 // })
 
 
