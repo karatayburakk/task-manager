@@ -1,6 +1,9 @@
 const mongoose = require('mongoose')
 const validator = require('validator/validator')
 const bcrypt = require('bcryptjs')
+const jwt = require('jsonwebtoken')
+
+
 const userSchema = mongoose.Schema({
     name: {
         type: String,
@@ -41,14 +44,32 @@ const userSchema = mongoose.Schema({
             if(value.length < 7){
             throw new Error('Password must be greater than 6 characters')
         }
-        if(value.includes('password')){
+            if(value.includes('password')){
             throw new Error('Password should not match with word it self')
+            }
+
+        }
+    },
+    tokens: [
+        {
+            token: {
+                type: String,
+                required: true
+            }
         }
 
-    }
-}
+    ]
 })
 
+userSchema.methods.generateAuthToken = async function () {
+
+    const user = this
+    const token = jwt.sign({_id: user._id.toString()}, 'thisismynewcourse')
+    user.tokens = user.tokens.concat({token: token})
+    await user.save()
+    return token
+
+}
 
 userSchema.statics.findByCredentials = async (email,password) => {
 

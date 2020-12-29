@@ -1,18 +1,24 @@
 const express = require ('express')
 const router = new express.Router()
 const User = require('../models/user')
-
-router.get('/users',  async (req,res) => {
-
-
-    try{
-        const users = await User.find({})
-        res.send(users)
+const auth = require('../middleware/auth')
 
 
-    } catch(e) {
-        res.send(e)
-    }
+router.get('/users/me', auth ,async (req,res) => {
+
+    res.send(req.user)
+
+
+
+
+    // try{
+    //     const users = await User.find({})
+    //     res.send(users)
+
+
+    // } catch(e) {
+    //     res.send(e)
+    // }
 
     // User.find({}).then((users) => {
     //     res.send(users)
@@ -70,7 +76,8 @@ router.post('/users', async (req,res) => {
     try {
 
         await user.save()
-        res.status(201).send(user)
+        const token = await user.generateAuthToken()
+        res.status(201).send({user, token})
 
     } catch (e) {
         res.status(400).send(e)
@@ -89,7 +96,8 @@ router.post('/users/login', async (req,res) => {
 
     try{
         const user = await User.findByCredentials(req.body.email, req.body.password)
-        res.send(user)
+        const token = await user.generateAuthToken()
+        res.send({user, token})
 
     } catch(e) {
 
@@ -97,9 +105,6 @@ router.post('/users/login', async (req,res) => {
         console.log(e)
 
     }
-
-
-
 
 })
 
