@@ -60,6 +60,8 @@ const userSchema = mongoose.Schema({
         }
 
     ]
+}, {
+    timestamps: true
 })
 
 userSchema.virtual('tasks', {
