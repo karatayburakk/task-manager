@@ -1,6 +1,7 @@
 const express = require ('express')
 const multer = require ('multer')
 const sharp = require('sharp')
+const { sendWelcomeEmail, sendDeletionEmail } = require ('../emails/accounts')
 
 const router = new express.Router()
 const User = require('../models/user')
@@ -76,6 +77,9 @@ router.post('/users', async (req,res) => {
     try {
 
         await user.save()
+
+        sendWelcomeEmail(user.email, user.name)
+
         const token = await user.generateAuthToken()
         res.status(201).send({user, token})
 
@@ -181,6 +185,7 @@ router.delete('/users/me', auth, async (req,res) => {
     try {
 
         await req.user.remove()
+        sendDeletionEmail(req.user.email, req.user.name)
         res.send(req.user)
 
     } catch(e) {
@@ -209,7 +214,6 @@ const upload = multer({
 router.post('/users/me/avatars', auth ,upload.single('avatar'), async (req,res) => {
     
     const buffer = await sharp(req.file.buffer).resize(({width: 250, height:250})).png().toBuffer()
-    
     req.user.avatar = buffer
     await req.user.save()
     res.send()
